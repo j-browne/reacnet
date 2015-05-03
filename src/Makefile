@@ -1,4 +1,4 @@
-CC      = gcc
+CC      = clang
 CFLAGS  = -Wall -Wextra -O3 -march=native -std=c99
 CFLAGS += -pedantic -g
 #FFLAGS += $(shell pkg-config --cflags plplotd-f95)

@@ -5,7 +5,7 @@
 #include "nucleus.h"
 #include "globals.h"
 
-size_t nucIndex(char* nuc, nucleus_t* nuclei, size_t numNuclei) {
+size_t nucIndex(char* nuc) {
 	size_t i;
 	for (i=0; i<numNuclei; ++i) {
 		if (strcmp(nuc,nuclei[i].name) == 0) {

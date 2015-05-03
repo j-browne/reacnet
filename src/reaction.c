@@ -63,11 +63,11 @@ bool get_reactions(const char* filename) {
 					++namestart;
 				}
 				if (i<reactions[numReactions].numIn) {
-					if ((reactions[numReactions].in[i]=nucIndex(namestart,nuclei,numNuclei))==-1) {
+					if ((reactions[numReactions].in[i]=nucIndex(namestart))==-1) {
 						add=false;
 					}
 				} else {
-					if ((reactions[numReactions].out[i-reactions[numReactions].numIn]=nucIndex(namestart,nuclei,numNuclei))==-1) {
+					if ((reactions[numReactions].out[i-reactions[numReactions].numIn]=nucIndex(namestart))==-1) {
 						add=false;
 					}
 				}

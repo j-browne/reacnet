@@ -11,7 +11,7 @@ typedef struct
 	size_t N;
 } nucleus_t;
 
-size_t nucIndex(char* nuc, nucleus_t* nuclei, size_t numNuclei);
+size_t nucIndex(char* nuc);
 bool get_nuclei(const char* filename);
 
 #endif // NUCLEUS_H
