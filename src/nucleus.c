@@ -25,29 +25,26 @@ bool get_nuclei(const char* filename) {
 	// Read in reactions
 	while (!feof(infile)) {
 		if (numNuclei>=maxNumNuclei) {
-			if (maxNumNuclei<1) {
-				maxNumNuclei=1;
-			} else {
-				maxNumNuclei*=2;
-			}
+			maxNumNuclei=(maxNumNuclei*2>1)?(maxNumNuclei*2):(1);
+
 			nuclei=realloc(nuclei,maxNumNuclei*sizeof(nucleus_t));
+			abun=realloc(abun,maxNumNuclei*sizeof(double));
 			if (nuclei==NULL) {
 				fprintf(stderr,"Error allocating space for 'nuclei'.\n");
+				return false;
+			}
+			if (abun==NULL) {
+				fprintf(stderr,"Error allocating space for 'abun'.\n");
 				return false;
 			}
 		}
 
 		// Process file
-		if (fscanf(infile, "%s\t%zu\t%zu",nuclei[numNuclei].name, &nuclei[numNuclei].Z, &nuclei[numNuclei].N) == 3) {
+		if (fscanf(infile, "%s\t%zu\t%zu\t%lf",nuclei[numNuclei].name, &nuclei[numNuclei].Z, &nuclei[numNuclei].N, &abun[numNuclei]) == 3) {
 			++numNuclei;
 		}
 	}
 
-	nuclei=realloc(nuclei,numNuclei*sizeof(nucleus_t));
-	if (nuclei==NULL) {
-		fprintf(stderr,"Error allocating space for 'nuclei'.\n");
-		return false;
-	}
 	fclose(infile);
 	return true;
 }

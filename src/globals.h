@@ -11,6 +11,6 @@ extern size_t numReactions;
 extern nucleus_t* nuclei;
 extern double* abun;
 extern reaction_t* reactions;
-extern options_t options;
+extern options_t ops;
 
 #endif // GLOBALS_H
