@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	//sim();
+	sim();
 
 	free(nuclei);
 	free(abun);
@@ -64,12 +64,12 @@ void print_abun(FILE* stream) {
 void sim() {
 	// Header for output
 	FILE* outfile=fopen(ops.output_filename,"w");
-/*	if (outfile==NULL) {
+	if (outfile==NULL) {
 		fprintf(stderr,"Error opening %s.\n",ops.output_filename);
 		exit(EXIT_FAILURE);
 	}
 	size_t i;
-	printf("# t");
+	fprintf(outfile,"# t");
 	for (i=0; i<numNuclei; ++i) {
 		fprintf(outfile,"\t%s",nuclei[i].name);
 	}
@@ -77,6 +77,7 @@ void sim() {
 	double t=0;
 	for (i=0; i<ops.nSteps; ++i) {
 		t += ops.dt;
+		print_abun(outfile);
 	}
-*/
+
 }

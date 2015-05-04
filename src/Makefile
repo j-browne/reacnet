@@ -3,7 +3,7 @@ CFLAGS  = -Wall -Wextra -O3 -march=native -std=c99
 CFLAGS += -pedantic -g
 #FFLAGS += $(shell pkg-config --cflags plplotd-f95)
 #LDFLAGS = $(shell pkg-config --libs plplotd-f95)
-LIBS    = -lm -llapack -lblas
+LIBS    = -lm -llapack
 
 COMPILE = $(CC) $(CFLAGS)
 LINK = $(CC) $(LDFLAGS)
