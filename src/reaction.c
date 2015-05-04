@@ -40,6 +40,7 @@ bool get_reactions(const char* filename) {
 			reactions=realloc(reactions,maxNumReactions*sizeof(reaction_t));
 			if (reactions==NULL) {
 				fprintf(stderr,"Error allocating space for 'reactions'.\n");
+				fclose(infile);
 				return false;
 			}
 		}
@@ -91,6 +92,7 @@ bool get_reactions(const char* filename) {
 	reactions=realloc(reactions,numReactions*sizeof(reaction_t));
 	if (reactions==NULL) {
 		fprintf(stderr,"Error allocating space for 'reactions'.\n");
+		fclose(infile);
 		return false;
 	}
 	fclose(infile);

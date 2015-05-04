@@ -34,10 +34,12 @@ bool get_nuclei(const char* filename) {
 			abun=realloc(abun,maxNumNuclei*sizeof(double));
 			if (nuclei==NULL) {
 				fprintf(stderr,"Error allocating space for 'nuclei'.\n");
+				fclose(infile);
 				return false;
 			}
 			if (abun==NULL) {
 				fprintf(stderr,"Error allocating space for 'abun'.\n");
+				fclose(infile);
 				return false;
 			}
 		}
@@ -52,10 +54,12 @@ bool get_nuclei(const char* filename) {
 	abun=realloc(abun,maxNumNuclei*sizeof(double));
 	if (nuclei==NULL) {
 		fprintf(stderr,"Error allocating space for 'nuclei'.\n");
+		fclose(infile);
 		return false;
 	}
 	if (abun==NULL) {
 		fprintf(stderr,"Error allocating space for 'abun'.\n");
+		fclose(infile);
 		return false;
 	}
 	fclose(infile);

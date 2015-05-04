@@ -69,15 +69,18 @@ void sim() {
 		exit(EXIT_FAILURE);
 	}
 	size_t i;
-	fprintf(outfile,"# t");
+	fprintf(outfile,"# time");
 	for (i=0; i<numNuclei; ++i) {
 		fprintf(outfile,"\t%s",nuclei[i].name);
 	}
+	fprintf(outfile,"\n");
 
 	double t=0;
 	for (i=0; i<ops.nSteps; ++i) {
 		t += ops.dt;
+		fprintf(outfile,"%lf",t);
 		print_abun(outfile);
+		fprintf(outfile,"\n");
 	}
-
+	fclose(outfile);
 }
