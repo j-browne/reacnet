@@ -51,7 +51,7 @@ bool get_nuclei(const char* filename) {
 	}
 
 	nuclei=realloc(nuclei,numNuclei*sizeof(nucleus_t));
-	abun=realloc(abun,maxNumNuclei*sizeof(double));
+	abun=realloc(abun,numNuclei*sizeof(double));
 	if (nuclei==NULL) {
 		fprintf(stderr,"Error allocating space for 'nuclei'.\n");
 		fclose(infile);
