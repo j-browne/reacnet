@@ -80,85 +80,37 @@ void sim() {
 	fprintf(outfile,"\n");
 
 	for (i=0; i<ops.nSteps; ++i) {
-		t += ops.dt;
+		t+=ops.dt;
 
-//		double J[numNuclei][numNuclei];
+		size_t j,k;
 		double b[numNuclei];
-//		double A[numNuclei*numNuclei];
-
-		// Calculate Jacobian
-		size_t j,k,l;
-/*		for (j=0; j<numNuclei; ++j) {
-			for (k=0; k<numNuclei; ++k) {
-				J[j][j]=0;
-			}
-		}
-		for (j=0; j<numReactions; ++j) {
-			double R=pow(ops.rho,reactions[j].numIn-1)*reaction_rate(reactions[j],ops.temp);
-			for (k=0; k<reactions[j].numIn; ++k) {
-				double RR=R;
-				for (l=0; l<reactions[j].numIn; ++l) {
-					if (l!=k) {
-						RR *= abun[reactions[j].in[l]];
-					}
-				}
-				for (l=0; l<reactions[j].numIn; ++l) {
-					J[reactions[j].in[l]][reactions[j].in[k]]+=-RR;
-				}
-				for (l=0; l<reactions[j].numOut; ++l) {
-					J[reactions[j].out[l]][reactions[j].in[k]]+=RR;
-				}
-			}
-		}
-*/
-		// Solve (1/h-J)d=b for d
-		// Calculate rhs (b)
 		for (j=0; j<numNuclei; ++j) {
 			b[j]=0;
 		}
 		for (j=0; j<numReactions; ++j) {
-			double R=pow(ops.rho,reactions[j].numIn-1)*reaction_rate(reactions[j],ops.temp);
+			// Determine rate
+			double R=pow(ops.rho,reactions[j].numIn-1)*reaction_rate(reactions[j], ops.temp);
 			for (k=0; k<reactions[j].numIn; ++k) {
-				R *= abun[reactions[j].in[k]]/(nuclei[reactions[j].in[k]].Z+nuclei[reactions[j].in[k]].N);
+				R*=abun[reactions[j].in[k]]/(nuclei[reactions[j].in[k]].Z+nuclei[reactions[j].in[k]].N);
 			}
+			// Use up reactants
 			for (k=0; k<reactions[j].numIn; ++k) {
-				b[reactions[j].in[k]]+=-R;
+				b[reactions[j].in[k]]-=R*ops.dt*(nuclei[reactions[j].in[k]].Z+nuclei[reactions[j].in[k]].N);
 			}
+			// Create products
 			for (k=0; k<reactions[j].numOut; ++k) {
-				b[reactions[j].out[k]]+=R;
-			}
-		}
-/*
-		// Calculate lhs (1/h-J)
-		// Also, reorder the array for FORTRAN
-		for (j=0; j<numNuclei; ++j) {
-			for (k=0; k<numNuclei; ++k) {
-				if (fabs(J[k][j]) > 1e-50) {
-					A[k+numNuclei*j]=-J[k][j];
-				} else {
-					A[k+numNuclei*j]=0;
-				}
-			}
-			A[j+numNuclei*j] = A[j+numNuclei*j] + 1/ops.dt;
-		}
-
-		// Solve
-		long c1=numNuclei;
-		long c2=1;
-		long pivot[numNuclei];
-		long ok;
-		dgesv_(&c1,&c2,A,&c1,pivot,b,&c1,&ok);
-*/
-		// Update abundance
-		for (j=0; j<numNuclei; ++j) {
-			abun[j] += b[j]*ops.dt;
-			if (abun[j] < 0) {
-				abun[j] = 0;
+				b[reactions[j].out[k]]+=R*ops.dt*(nuclei[reactions[j].in[k]].Z+nuclei[reactions[j].in[k]].N);
 			}
 		}
 
-		// Output
-		fprintf(outfile,"%le",t);
+		for (j=0; j<numNuclei; ++j) {
+			abun[j]+=b[j];
+			if (abun[j]<0) {
+				abun[j]=0;
+			}
+		}
+
+		fprintf(outfile,"%e",t);
 		print_abun(outfile);
 		fprintf(outfile,"\n");
 	}
