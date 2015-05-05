@@ -82,13 +82,13 @@ void sim() {
 	for (i=0; i<ops.nSteps; ++i) {
 		t += ops.dt;
 
-		double J[numNuclei][numNuclei];
+//		double J[numNuclei][numNuclei];
 		double b[numNuclei];
-		double A[numNuclei*numNuclei];
+//		double A[numNuclei*numNuclei];
 
 		// Calculate Jacobian
 		size_t j,k,l;
-		for (j=0; j<numNuclei; ++j) {
+/*		for (j=0; j<numNuclei; ++j) {
 			for (k=0; k<numNuclei; ++k) {
 				J[j][j]=0;
 			}
@@ -110,7 +110,7 @@ void sim() {
 				}
 			}
 		}
-
+*/
 		// Solve (1/h-J)d=b for d
 		// Calculate rhs (b)
 		for (j=0; j<numNuclei; ++j) {
@@ -119,7 +119,7 @@ void sim() {
 		for (j=0; j<numReactions; ++j) {
 			double R=pow(ops.rho,reactions[j].numIn-1)*reaction_rate(reactions[j],ops.temp);
 			for (k=0; k<reactions[j].numIn; ++k) {
-				R *= abun[reactions[j].in[k]];
+				R *= abun[reactions[j].in[k]]/(nuclei[reactions[j].in[k]].Z+nuclei[reactions[j].in[k]].N);
 			}
 			for (k=0; k<reactions[j].numIn; ++k) {
 				b[reactions[j].in[k]]+=-R;
@@ -128,12 +128,16 @@ void sim() {
 				b[reactions[j].out[k]]+=R;
 			}
 		}
-
+/*
 		// Calculate lhs (1/h-J)
 		// Also, reorder the array for FORTRAN
 		for (j=0; j<numNuclei; ++j) {
 			for (k=0; k<numNuclei; ++k) {
-				A[k+numNuclei*j]=-J[k][j];
+				if (fabs(J[k][j]) > 1e-50) {
+					A[k+numNuclei*j]=-J[k][j];
+				} else {
+					A[k+numNuclei*j]=0;
+				}
 			}
 			A[j+numNuclei*j] = A[j+numNuclei*j] + 1/ops.dt;
 		}
@@ -144,10 +148,13 @@ void sim() {
 		long pivot[numNuclei];
 		long ok;
 		dgesv_(&c1,&c2,A,&c1,pivot,b,&c1,&ok);
-
+*/
 		// Update abundance
 		for (j=0; j<numNuclei; ++j) {
-			abun[j] += b[j];
+			abun[j] += b[j]*ops.dt;
+			if (abun[j] < 0) {
+				abun[j] = 0;
+			}
 		}
 
 		// Output
