@@ -6,7 +6,7 @@
 #include "nucleus.h"
 #include "globals.h"
 
-double reactionRate(reaction_t r, double T) {
+double reaction_rate(reaction_t r, double T) {
 	double exponent=r.param[0];
 	size_t i;
 	for (i=1; i<6; ++i) {

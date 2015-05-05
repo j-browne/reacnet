@@ -16,7 +16,7 @@ typedef struct
 	double Q;
 } reaction_t;
 
-double reactionRate(reaction_t r, double T);
+double reaction_rate(reaction_t r, double T);
 bool get_reactions(const char* filename);
 
 #endif // REACTION_H
