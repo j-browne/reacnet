@@ -62,6 +62,7 @@ void print_abun(FILE* stream) {
 }
 
 void sim() {
+	double t=0;
 	// Header for output
 	FILE* outfile=fopen(ops.output_filename,"w");
 	if (outfile==NULL) {
@@ -74,8 +75,10 @@ void sim() {
 		fprintf(outfile,"\t%s",nuclei[i].name);
 	}
 	fprintf(outfile,"\n");
+	fprintf(outfile,"%le",t);
+	print_abun(outfile);
+	fprintf(outfile,"\n");
 
-	double t=0;
 	for (i=0; i<ops.nSteps; ++i) {
 		t += ops.dt;
 
@@ -91,16 +94,19 @@ void sim() {
 			}
 		}
 		for (j=0; j<numReactions; ++j) {
-			double R=reaction_rate(reactions[j],ops.temp);
+			double R=pow(ops.rho,reactions[j].numIn-1)*reaction_rate(reactions[j],ops.temp);
 			for (k=0; k<reactions[j].numIn; ++k) {
-				R *= pow(ops.rho,reactions[j].numIn-1)*abun[reactions[j].in[k]];
-			}
-			for (k=0; k<reactions[j].numIn; ++k) {
+				double RR=R;
 				for (l=0; l<reactions[j].numIn; ++l) {
-					J[reactions[j].in[l]][reactions[j].in[k]]=-R/abun[reactions[j].in[k]];
+					if (l!=k) {
+						RR *= abun[reactions[j].in[l]];
+					}
+				}
+				for (l=0; l<reactions[j].numIn; ++l) {
+					J[reactions[j].in[l]][reactions[j].in[k]]+=-RR;
 				}
 				for (l=0; l<reactions[j].numOut; ++l) {
-					J[reactions[j].out[l]][reactions[j].in[k]]=R/abun[reactions[j].in[k]];
+					J[reactions[j].out[l]][reactions[j].in[k]]+=RR;
 				}
 			}
 		}
@@ -111,9 +117,9 @@ void sim() {
 			b[j]=0;
 		}
 		for (j=0; j<numReactions; ++j) {
-			double R=reaction_rate(reactions[j],ops.temp);
+			double R=pow(ops.rho,reactions[j].numIn-1)*reaction_rate(reactions[j],ops.temp);
 			for (k=0; k<reactions[j].numIn; ++k) {
-				R *= pow(ops.rho,reactions[j].numIn-1)*abun[reactions[j].in[k]];
+				R *= abun[reactions[j].in[k]];
 			}
 			for (k=0; k<reactions[j].numIn; ++k) {
 				b[reactions[j].in[k]]+=-R;
